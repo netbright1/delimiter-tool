@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delimiter & Separator Tool</title>
+    <style>
+        /* --- General Styling & Layout --- */
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #000000;
+            --light-bg: #242629;
+            --dark-bg: #e9ecef;
+            --border-color: #454546;
+            --text-color: #000000;
+            --white: #888888;
+            --danger-color: #dc3545;
+            --success-color: #28a745;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px 30px;
+        }
+
+        header h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+        }
+
+        /* --- Main Converter Wrapper --- */
+        .converter-wrapper {
+            display: flex;
+            gap: 20px;
+            align-items: stretch;
+        }
+
+        /* --- Input/Output Boxes --- */
+        .box-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .box-container label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--secondary-color);
+        }
+
+        textarea {
+            width: 100%;
+            flex-grow: 1;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 300px;
+            box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+        }
+
+        #output-text {
+            background-color: var(--dark-bg);
+        }
+        
+        /* --- Utility Buttons (Clear & Copy) --- */
+        .clear-btn, .copy-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            padding: 0 10px;
+            line-height: 30px;
+            opacity: 0.6;
+            transition: opacity 0.2s, color 0.2s;
+        }
+        
+        .clear-btn:hover {
+            color: var(--danger-color);
+            opacity: 1;
+        }
+        
+        .copy-btn {
+            right: 5px;
+            top: 2px;
+            font-size: 1rem;
+            padding: 5px 8px;
+            border-radius: 4px;
+            background-color: var(--secondary-color);
+            color: var(--white);
+        }
+
+        .copy-btn:hover {
+            opacity: 0.8;
+        }
+        
+        .copy-btn.copied {
+            background-color: var(--success-color);
+        }
+
+        /* --- Controls & Settings --- */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 0 20px;
+        }
+
+        .action-button {
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background-color: var(--primary-color);
+            color: var(--white);
+            transition: background-color 0.2s, transform 0.1s;
+            min-width: 200px;
+        }
+
+        .action-button:hover {
+            background-color: #0056b3;
+        }
+        
+        .action-button:active {
+            transform: translateY(1px);
+        }
+
+        .settings {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .settings legend {
+            font-weight: bold;
+            padding: 0 10px;
+            margin-left: 5px;
+            color: var(--secondary-color);
+        }
+
+        .delimiter-options label {
+            display: block;
+            margin-bottom: 10px;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .delimiter-options input {
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        /* --- Responsive Design --- */
+        @media (max-width: 992px) {
+            .converter-wrapper {
+                flex-direction: column;
+            }
+            .controls {
+                flex-direction: row;
+                flex-wrap: wrap;
+                width: 100%;
+            }
+            .action-button {
+                flex-grow: 1;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 15px;
+            }
+            header h1 {
+                font-size: 1.5rem;
+            }
+            .controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Delimiter & Separator Tool</h1>
+        </header>
+
+        <main class="converter-wrapper">
+            <!-- Left Side: Input -->
+            <div class="box-container input-container">
+                <label for="input-text">Input Data (Column or Delimited)</label>
+                <textarea id="input-text" placeholder="Paste your column data here...&#10;item 1&#10;item 2&#10;item 3&#10;&#10;Or paste your delimited data...&#10;item 1, item 2, item 3"></textarea>
+                <button id="clear-input-btn" class="clear-btn" title="Clear Input">&times;</button>
+            </div>
+
+            <!-- Middle: Controls & Settings -->
+            <div class="controls">
+                <button id="convert-to-delimited" class="action-button">Convert to Delimited &rarr;</button>
+                <button id="convert-to-column" class="action-button">Convert to Column &rarr;</button>
+                
+                <fieldset class="settings">
+                    <legend>Settings</legend>
+                    <div class="delimiter-options">
+                        <label>
+                            <input type="radio" name="delimiter" value="," checked> Comma
+                        </label>
+                        <label>
+                            <input type="radio" name="delimiter" value=";"> Semicolon
+                        </label>
+                        <label>
+                            <input type="radio" name="delimiter" value="|"> Bar
+                        </label>
+                        <label>
+                            <input type="radio" name="delimiter" value=" "> Spaces
+                        </label>
+                        <label>
+                            <input type="radio" name="delimiter" value="\n"> New Lines
+                        </label>
+                    </div>
+                </fieldset>
+            </div>
+
+            <!-- Right Side: Output -->
+            <div class="box-container output-container">
+                <label for="output-text">Output Data</label>
+                <textarea id="output-text" readonly placeholder="Result will appear here..."></textarea>
+                <button id="copy-output-btn" class="copy-btn" title="Copy to Clipboard">Copy</button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Element Selection ---
+            const inputTextArea = document.getElementById('input-text');
+            const outputTextArea = document.getElementById('output-text');
+            const convertToDelimitedBtn = document.getElementById('convert-to-delimited');
+            const convertToColumnBtn = document.getElementById('convert-to-column');
+            const clearInputBtn = document.getElementById('clear-input-btn');
+            const copyOutputBtn = document.getElementById('copy-output-btn');
+
+            // --- Helper Function: Get Selected Delimiter ---
+            const getSelectedDelimiter = () => {
+                const selectedOption = document.querySelector('input[name="delimiter"]:checked');
+                return selectedOption ? selectedOption.value : ','; // Default to comma
+            };
+            
+            // --- Utility Function: Copy Output to Clipboard ---
+            const copyOutput = () => {
+                const outputText = outputTextArea.value;
+                if (!outputText) return;
+
+                navigator.clipboard.writeText(outputText).then(() => {
+                    // Provide feedback to the user
+                    copyOutputBtn.textContent = 'Copied!';
+                    copyOutputBtn.classList.add('copied');
+                    setTimeout(() => {
+                        copyOutputBtn.textContent = 'Copy';
+                        copyOutputBtn.classList.remove('copied');
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy text: ', err);
+                });
+            };
+
+            // --- Core Function: Convert to Delimited Text ---
+            const convertToDelimited = () => {
+                const inputText = inputTextArea.value.trim();
+                if (!inputText) {
+                    outputTextArea.value = '';
+                    return;
+                }
+
+                const delimiter = getSelectedDelimiter();
+                // Split by new lines (\r\n for Windows, \n for Unix/Mac)
+                const lines = inputText.split(/\r?\n/);
+                
+                // Filter out any empty lines to avoid extra delimiters
+                const nonEmptyLines = lines.filter(line => line.trim() !== '');
+
+                outputTextArea.value = nonEmptyLines.join(delimiter);
+                copyOutput(); // <<<--- NEW: Auto-copy after conversion
+            };
+
+            // --- Core Function: Convert to Column Data ---
+            const convertToColumn = () => {
+                const inputText = inputTextArea.value.trim();
+                if (!inputText) {
+                    outputTextArea.value = '';
+                    return;
+                }
+                
+                const delimiter = getSelectedDelimiter();
+                const items = inputText.split(delimiter);
+                
+                // Trim each item to remove leading/trailing whitespace
+                const trimmedItems = items.map(item => item.trim());
+
+                outputTextArea.value = trimmedItems.join('\n');
+                copyOutput(); // <<<--- NEW: Auto-copy after conversion
+            };
+
+            // --- Utility Function: Clear Input and Output ---
+            const clearFields = () => {
+                inputTextArea.value = '';
+                outputTextArea.value = '';
+                inputTextArea.focus();
+            };
+
+            // --- Event Listeners ---
+            convertToDelimitedBtn.addEventListener('click', convertToDelimited);
+            convertToColumnBtn.addEventListener('click', convertToColumn);
+            clearInputBtn.addEventListener('click', clearFields);
+            copyOutputBtn.addEventListener('click', copyOutput); // Keep this for manual copying
+        });
+    </script>
+
+</body>
+</html>
