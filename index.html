@@ -9,19 +9,20 @@
         :root {
             --primary-color: #000000;
             --secondary-color: #000000;
-            --light-bg: #242629;
-            --dark-bg: #e9ecef;
-            --border-color: #454546;
-            --text-color: #000000;
-            --white: #888888;
+            --page-bg: #1f1f1f;
+            --container-bg: #ffffff;
+            --output-bg: #e9ecef;
+            --border-color: #ced4da;
+            --text-color: #212529;
             --danger-color: #dc3545;
             --success-color: #28a745;
+            --white: #ffffff;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             margin: 0;
-            background-color: var(--light-bg);
+            background-color: var(--page-bg);
             color: var(--text-color);
             display: flex;
             justify-content: center;
@@ -31,9 +32,9 @@
         .container {
             width: 100%;
             max-width: 1200px;
-            background-color: var(--white);
+            background-color: var(--container-bg);
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             padding: 20px 30px;
         }
 
@@ -72,7 +73,7 @@
             border-radius: 6px;
             font-size: 1rem;
             resize: vertical;
-            min-height: 300px;
+            min-height: 450px;
             box-sizing: border-box;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
@@ -84,47 +85,66 @@
         }
 
         #output-text {
-            background-color: var(--dark-bg);
+            background-color: var(--output-bg);
         }
         
-        /* --- Utility Buttons (Clear & Copy) --- */
-        .clear-btn, .copy-btn {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.5rem;
-            color: var(--secondary-color);
-            padding: 0 10px;
-            line-height: 30px;
-            opacity: 0.6;
-            transition: opacity 0.2s, color 0.2s;
-        }
-        
-        .clear-btn:hover {
-            color: var(--danger-color);
-            opacity: 1;
-        }
-        
+        /* --- Utility Buttons (Copy) --- */
         .copy-btn {
+            position: absolute;
+            top: 5px;
             right: 5px;
-            top: 2px;
-            font-size: 1rem;
-            padding: 5px 8px;
+            background: none;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            padding: 5px 10px;
             border-radius: 4px;
+            background-color: var(--container-bg);
+            opacity: 0.8;
+            transition: opacity 0.2s, color 0.2s, background-color 0.2s;
+        }
+        
+        .copy-btn:hover {
+            opacity: 1;
             background-color: var(--secondary-color);
             color: var(--white);
-        }
-
-        .copy-btn:hover {
-            opacity: 0.8;
         }
         
         .copy-btn.copied {
             background-color: var(--success-color);
+            color: var(--white);
+            border-color: var(--success-color);
         }
+        
+        /* --- Clear Button Container --- */
+        .clear-button-container {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        /* --- Bigger Clear Button --- */
+        .clear-all-btn {
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background-color: var(--danger-color);
+            color: var(--white);
+            transition: background-color 0.2s, transform 0.1s;
+            min-width: 220px;
+        }
+
+        .clear-all-btn:hover {
+            background-color: #c82333;
+        }
+
+        .clear-all-btn:active {
+            transform: translateY(1px);
+        }
+
 
         /* --- Controls & Settings --- */
         .controls {
@@ -162,6 +182,7 @@
             border-radius: 6px;
             padding: 15px;
             margin-top: 20px;
+            width: 100%;
         }
 
         .settings legend {
@@ -181,6 +202,36 @@
         .delimiter-options input {
             margin-right: 8px;
             vertical-align: middle;
+        }
+
+        /* --- Advanced Options Styling --- */
+        .advanced-options {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .advanced-options label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+        
+        .advanced-options input[type="checkbox"] {
+            margin-right: 8px;
+            height: 15px;
+            width: 15px;
+        }
+
+        .text-modifier-input {
+            margin-left: 5px;
+            padding: 4px 6px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.9rem;
+            width: 120px;
         }
         
         /* --- Responsive Design --- */
@@ -226,32 +277,27 @@
             <div class="box-container input-container">
                 <label for="input-text">Input Data (Column or Delimited)</label>
                 <textarea id="input-text" placeholder="Paste your column data here...&#10;item 1&#10;item 2&#10;item 3&#10;&#10;Or paste your delimited data...&#10;item 1, item 2, item 3"></textarea>
-                <button id="clear-input-btn" class="clear-btn" title="Clear Input">&times;</button>
             </div>
 
             <!-- Middle: Controls & Settings -->
             <div class="controls">
                 <button id="convert-to-delimited" class="action-button">Convert to Delimited &rarr;</button>
-                <button id="convert-to-column" class="action-button">Convert to Column &rarr;</button>
+                <button id="convert-to-column" class="action-button">Convert to Column&rarr;</button>
                 
                 <fieldset class="settings">
                     <legend>Settings</legend>
                     <div class="delimiter-options">
-                        <label>
-                            <input type="radio" name="delimiter" value="," checked> Comma
-                        </label>
-                        <label>
-                            <input type="radio" name="delimiter" value=";"> Semicolon
-                        </label>
-                        <label>
-                            <input type="radio" name="delimiter" value="|"> Bar
-                        </label>
-                        <label>
-                            <input type="radio" name="delimiter" value=" "> Spaces
-                        </label>
-                        <label>
-                            <input type="radio" name="delimiter" value="\n"> New Lines
-                        </label>
+                        <label><input type="radio" name="delimiter" value="," checked> Comma</label>
+                        <label><input type="radio" name="delimiter" value=";"> Semicolon</label>
+                        <label><input type="radio" name="delimiter" value="|"> Bar</label>
+                        <label><input type="radio" name="delimiter" value=" "> Spaces</label>
+                        <label><input type="radio" name="delimiter" value="\n"> New Lines</label>
+                    </div>
+
+                    <div class="advanced-options">
+                        <label><input type="checkbox" id="remove-duplicates-check"> Remove Duplicates</label>
+                        <label><input type="checkbox" id="add-prefix-check"> Add Prefix: <input type="text" id="prefix-input" class="text-modifier-input" placeholder="e.g. 'ID-'"></label>
+                        <label><input type="checkbox" id="add-suffix-check"> Add Suffix: <input type="text" id="suffix-input" class="text-modifier-input" placeholder="e.g. '.com'"></label>
                     </div>
                 </fieldset>
             </div>
@@ -263,6 +309,10 @@
                 <button id="copy-output-btn" class="copy-btn" title="Copy to Clipboard">Copy</button>
             </div>
         </main>
+        
+        <div class="clear-button-container">
+            <button id="clear-all-btn" class="clear-all-btn">Clear All</button>
+        </div>
     </div>
 
     <script>
@@ -272,68 +322,107 @@
             const outputTextArea = document.getElementById('output-text');
             const convertToDelimitedBtn = document.getElementById('convert-to-delimited');
             const convertToColumnBtn = document.getElementById('convert-to-column');
-            const clearInputBtn = document.getElementById('clear-input-btn');
             const copyOutputBtn = document.getElementById('copy-output-btn');
+            const clearAllBtn = document.getElementById('clear-all-btn');
+
+            // Flag elements
+            const removeDuplicatesCheck = document.getElementById('remove-duplicates-check');
+            const addPrefixCheck = document.getElementById('add-prefix-check');
+            const prefixInput = document.getElementById('prefix-input');
+            const addSuffixCheck = document.getElementById('add-suffix-check');
+            const suffixInput = document.getElementById('suffix-input');
 
             // --- Helper Function: Get Selected Delimiter ---
             const getSelectedDelimiter = () => {
                 const selectedOption = document.querySelector('input[name="delimiter"]:checked');
-                return selectedOption ? selectedOption.value : ','; // Default to comma
+                if (selectedOption && selectedOption.value === '\\n') {
+                    return '\n';
+                }
+                return selectedOption ? selectedOption.value : ',';
+            };
+
+            // --- Core Processing Function for Flags ---
+            const processItems = (items) => {
+                let processed = [...items];
+
+                if (addPrefixCheck.checked) {
+                    const prefix = prefixInput.value;
+                    processed = processed.map(item => prefix + item);
+                }
+
+                if (addSuffixCheck.checked) {
+                    const suffix = suffixInput.value;
+                    processed = processed.map(item => item + suffix);
+                }
+                
+                // Apply remove duplicates *after* prefix/suffix so it's more accurate
+                if (removeDuplicatesCheck.checked) {
+                    processed = [...new Set(processed)];
+                }
+
+                return processed;
             };
             
             // --- Utility Function: Copy Output to Clipboard ---
             const copyOutput = () => {
-                const outputText = outputTextArea.value;
-                if (!outputText) return;
-
-                navigator.clipboard.writeText(outputText).then(() => {
-                    // Provide feedback to the user
+                if (!outputTextArea.value) return;
+                navigator.clipboard.writeText(outputTextArea.value).then(() => {
                     copyOutputBtn.textContent = 'Copied!';
                     copyOutputBtn.classList.add('copied');
                     setTimeout(() => {
                         copyOutputBtn.textContent = 'Copy';
                         copyOutputBtn.classList.remove('copied');
                     }, 2000);
-                }).catch(err => {
-                    console.error('Failed to copy text: ', err);
-                });
+                }).catch(err => console.error('Failed to copy text: ', err));
             };
 
             // --- Core Function: Convert to Delimited Text ---
             const convertToDelimited = () => {
-                const inputText = inputTextArea.value.trim();
-                if (!inputText) {
+                const inputText = inputTextArea.value;
+                if (!inputText.trim()) {
                     outputTextArea.value = '';
                     return;
                 }
 
                 const delimiter = getSelectedDelimiter();
-                // Split by new lines (\r\n for Windows, \n for Unix/Mac)
+                // Split by new lines, trim each line, and filter out empty ones
                 const lines = inputText.split(/\r?\n/);
-                
-                // Filter out any empty lines to avoid extra delimiters
-                const nonEmptyLines = lines.filter(line => line.trim() !== '');
+                const cleanedItems = lines.map(line => line.trim()).filter(line => line !== '');
 
-                outputTextArea.value = nonEmptyLines.join(delimiter);
-                copyOutput(); // <<<--- NEW: Auto-copy after conversion
+                // Apply flags (duplicates, prefix, suffix)
+                const processedItems = processItems(cleanedItems);
+
+                outputTextArea.value = processedItems.join(delimiter);
+                copyOutput();
             };
 
             // --- Core Function: Convert to Column Data ---
             const convertToColumn = () => {
-                const inputText = inputTextArea.value.trim();
-                if (!inputText) {
+                const inputText = inputTextArea.value;
+                if (!inputText.trim()) {
                     outputTextArea.value = '';
                     return;
                 }
                 
                 const delimiter = getSelectedDelimiter();
-                const items = inputText.split(delimiter);
-                
-                // Trim each item to remove leading/trailing whitespace
-                const trimmedItems = items.map(item => item.trim());
 
-                outputTextArea.value = trimmedItems.join('\n');
-                copyOutput(); // <<<--- NEW: Auto-copy after conversion
+                // --- THIS IS THE FIX ---
+                // First, pre-process the input by replacing any newlines with the selected delimiter.
+                // This "flattens" the input, ensuring "item1,item2\nitem3,item4" is treated as one list.
+                const flattenedText = inputText.replace(/\r?\n/g, delimiter);
+                
+                // Now, split by the delimiter to get a clean array of items.
+                const items = flattenedText.split(delimiter);
+                // ---------------------
+
+                // Trim each item and filter out any empty ones that might result from the split.
+                const cleanedItems = items.map(item => item.trim()).filter(item => item !== '');
+
+                // Apply flags (duplicates, prefix, suffix)
+                const processedItems = processItems(cleanedItems);
+
+                outputTextArea.value = processedItems.join('\n');
+                copyOutput();
             };
 
             // --- Utility Function: Clear Input and Output ---
@@ -346,8 +435,8 @@
             // --- Event Listeners ---
             convertToDelimitedBtn.addEventListener('click', convertToDelimited);
             convertToColumnBtn.addEventListener('click', convertToColumn);
-            clearInputBtn.addEventListener('click', clearFields);
-            copyOutputBtn.addEventListener('click', copyOutput); // Keep this for manual copying
+            clearAllBtn.addEventListener('click', clearFields);
+            copyOutputBtn.addEventListener('click', copyOutput);
         });
     </script>
 
